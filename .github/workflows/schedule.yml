@@ -47,6 +47,9 @@ jobs:
           # 6. RELAX CONTOURPY VERSION SO PIP CAN CHOOSE THE BEST COMPATIBLE 3.11 RUNTIME
           sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
 
+          # 7. REMOVE CPSAT-LOGUTILS TO PREVENT NO MATCHING DISTRIBUTION CRASHES
+          sed -i '/cpsat-logutils/d' requirements.txt
+
       - name: Install Jupyter and Dependencies
         run: |
           python -m pip install --upgrade pip

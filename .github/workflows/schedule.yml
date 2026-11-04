@@ -38,8 +38,11 @@ jobs:
           # Remove python-apt which always fails on GitHub Actions
           sed -i '/python-apt/d' requirements.txt
 
-          # DROP PYTORCH ENTIRELY TO FIX THE WHEEL ERROR AND SPEED UP INSTALLS
-          sed -i '/torch/d' requirements.txt
+          # 4. Safely remove PyTorch machine learning libraries
+          sed -i '/^torch/d' requirements.txt
+
+          # 5. RELAX THE ACCESS VERSION SO IT CAN FALLBACK TO A PYTHON 3.10 COMPATIBLE VERSION
+          sed -i 's/access==1.1.10.post3/access>=1.1.0/g' requirements.txt
 
       - name: Install Jupyter and Dependencies
         run: |

@@ -41,6 +41,9 @@ jobs:
           # 4. Safely remove PyTorch machine learning libraries
           sed -i '/^torch/d' requirements.txt
 
+          # 6. REMOVE AUDIOOP-LTS BECAUSE IT IS ONLY FOR PYTHON 3.13+
+          sed -i '/audioop-lts/d' requirements.txt
+
       - name: Install Jupyter and Dependencies
         run: |
           python -m pip install --upgrade pip

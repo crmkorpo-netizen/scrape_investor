@@ -28,25 +28,26 @@ jobs:
           
       - name: Clean requirements file
         run: |
-         # Replace Google's broken kernel gateway fork with the clean public version
+         # 1. Remove Google's broken kernel gateway fork and add the clean public version
           sed -i '/jupyter_kernel_gateway/d' requirements.txt
           echo "jupyter-kernel-gateway" >> requirements.txt
           
-          # Fix the spaCy model line to a standard package format
+          # 2. Fix the spaCy model line to a standard package format
           sed -i 's|en_core_web_sm @ .*|en_core_web_sm|g' requirements.txt
           
-          # Remove niche/system libraries that fail to compile or find wheels
+          # 3. Remove niche/system libraries that fail to compile or find wheels
           sed -i '/python-apt/d' requirements.txt
           sed -i '/audioop-lts/d' requirements.txt
           sed -i '/cpsat-logutils/d' requirements.txt
-          
-          # REMOVE CYIPOPT TO PREVENT ACCIDENTAL COMPILATION FAILURES
           sed -i '/cyipopt/d' requirements.txt
           
-          # Safely remove heavy PyTorch ML packages to avoid architecture mismatches
+          # 4. REMOVE DBUS-PYTHON TO PREVENT NATIVE COMPILATION ERRORS
+          sed -i '/dbus-python/d' requirements.txt
+          
+          # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt
 
-          # Relax contourpy version so pip can choose a stable runtime build
+          # 6. Relax contourpy version so pip can choose a stable runtime build
           sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
 
       - name: Install Jupyter and Dependencies

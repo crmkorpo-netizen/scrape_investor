@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           cache: 'pip'
           
       - name: Clean requirements file
@@ -40,9 +40,6 @@ jobs:
 
           # 4. Safely remove PyTorch machine learning libraries
           sed -i '/^torch/d' requirements.txt
-
-          # 5. RELAX THE ACCESS VERSION SO IT CAN FALLBACK TO A PYTHON 3.10 COMPATIBLE VERSION
-          sed -i 's/access==1.1.10.post3/access>=1.1.0/g' requirements.txt
 
       - name: Install Jupyter and Dependencies
         run: |

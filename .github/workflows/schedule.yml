@@ -25,6 +25,18 @@ jobs:
         with:
           python-version: '3.10'
           cache: 'pip'
+          
+      - name: Clean requirements file
+        run: |
+          # Remove Google's broken kernel gateway fork and add the clean public version
+          sed -i '/jupyter_kernel_gateway/d' requirements.txt
+          echo "jupyter-kernel-gateway" >> requirements.txt
+          
+          # Fix the spaCy model line to a standard package format
+          sed -i 's|en_core_web_sm @ .*|en_core_web_sm|g' requirements.txt
+          
+          # Remove python-apt which always fails on GitHub Actions
+          sed -i '/python-apt/d' requirements.txt
 
       - name: Install Jupyter and Dependencies
         run: |

@@ -44,6 +44,9 @@ jobs:
           # 6. REMOVE AUDIOOP-LTS BECAUSE IT IS ONLY FOR PYTHON 3.13+
           sed -i '/audioop-lts/d' requirements.txt
 
+          # 6. RELAX CONTOURPY VERSION SO PIP CAN CHOOSE THE BEST COMPATIBLE 3.11 RUNTIME
+          sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
+
       - name: Install Jupyter and Dependencies
         run: |
           python -m pip install --upgrade pip

@@ -38,6 +38,9 @@ jobs:
           # Remove python-apt which always fails on GitHub Actions
           sed -i '/python-apt/d' requirements.txt
 
+          # Optional: Remove heavy torch packages if your scraper doesn't need ML
+          sed -i '/torch/d' requirements.txt 
+
       - name: Install Jupyter and Dependencies
         run: |
           python -m pip install --upgrade pip

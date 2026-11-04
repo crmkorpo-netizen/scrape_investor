@@ -28,27 +28,26 @@ jobs:
           
       - name: Clean requirements file
         run: |
-          # Remove Google's broken kernel gateway fork and add the clean public version
+         # Replace Google's broken kernel gateway fork with the clean public version
           sed -i '/jupyter_kernel_gateway/d' requirements.txt
           echo "jupyter-kernel-gateway" >> requirements.txt
           
           # Fix the spaCy model line to a standard package format
           sed -i 's|en_core_web_sm @ .*|en_core_web_sm|g' requirements.txt
           
-          # Remove python-apt which always fails on GitHub Actions
+          # Remove niche/system libraries that fail to compile or find wheels
           sed -i '/python-apt/d' requirements.txt
-
-          # 4. Safely remove PyTorch machine learning libraries
+          sed -i '/audioop-lts/d' requirements.txt
+          sed -i '/cpsat-logutils/d' requirements.txt
+          
+          # REMOVE CYIPOPT TO PREVENT ACCIDENTAL COMPILATION FAILURES
+          sed -i '/cyipopt/d' requirements.txt
+          
+          # Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt
 
-          # 6. REMOVE AUDIOOP-LTS BECAUSE IT IS ONLY FOR PYTHON 3.13+
-          sed -i '/audioop-lts/d' requirements.txt
-
-          # 6. RELAX CONTOURPY VERSION SO PIP CAN CHOOSE THE BEST COMPATIBLE 3.11 RUNTIME
+          # Relax contourpy version so pip can choose a stable runtime build
           sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
-
-          # 7. REMOVE CPSAT-LOGUTILS TO PREVENT NO MATCHING DISTRIBUTION CRASHES
-          sed -i '/cpsat-logutils/d' requirements.txt
 
       - name: Install system optimization libraries
         run: |

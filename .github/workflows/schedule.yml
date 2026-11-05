@@ -51,9 +51,10 @@ jobs:
           sed -i '/PuLP/d' requirements.txt
           sed -i '/pycairo/d' requirements.txt
           sed -i '/PyGObject/d' requirements.txt
-          
-          # 4. RELAX PYPROJ VERSION FOR PYTHON 3.11 COMPATIBILITY
           sed -i 's/pyproj==3.8.0/pyproj>=3.6.0/g' requirements.txt
+          
+          # 4. RELAX PYWAVELETS VERSION FOR PYTHON 3.11 COMPATIBILITY
+          sed -i 's/PyWavelets==1.10.0/PyWavelets>=1.5.0/g' requirements.txt
           
           # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

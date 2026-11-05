@@ -47,9 +47,10 @@ jobs:
           sed -i '/^jax/d' requirements.txt
           sed -i 's/Mako==1.3.2.dev0/Mako>=1.3.2/g' requirements.txt
           sed -i 's/networkx==3.7/networkx>=3.0/g' requirements.txt
-          
-          # 4. REMOVE ORLOGE TO PREVENT UNINDEXED DEPENDENCY CRASHES
           sed -i '/orloge/d' requirements.txt
+          
+          # 4. REMOVE PULP OPTIMIZATION PACKAGE TO PREVENT ENTRY MISMATCHES
+          sed -i '/PuLP/d' requirements.txt
           
           # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

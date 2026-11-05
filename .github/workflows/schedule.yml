@@ -41,27 +41,29 @@ jobs:
 
     - name: Execute Notebook
       run: |
-        # Executes notebook, updates the cell outputs inside it, and prevents fallback errors
         jupyter nbconvert --to notebook --execute --inplace try_investor.ipynb
+
+    - name: Debug Workspace Files
+      run: |
+        echo "=== Current Working Directory ==="
+        pwd
+        echo "=== Listing All Files Recursively ==="
+        ls -R
 
     - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
-        # Stage the updated notebook file
         git add try_investor.ipynb
         
-        # Stage any CSV files if they exist
-        if ls *.csv 1> /dev/null 2>&1; then 
-          git add *.csv
-         Harlow
-        fi
+        # Look for CSVs anywhere in the repository directory
+        find . -name "*.csv" -exec git add {} +
         
-        # Commit only if there are actual structural changes to push
         if ! git diff --cached --quiet; then
           git commit -m "Automated data and notebook execution update [skip ci]"
           git push
         else
-          echo "No changes detected in the notebook or data files. Skipping commit."
+          echo "No changes detected. Skipping commit."
         fi
+

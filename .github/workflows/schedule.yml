@@ -41,9 +41,10 @@ jobs:
           sed -i '/cpsat-logutils/d' requirements.txt
           sed -i '/cyipopt/d' requirements.txt
           sed -i '/dbus-python/d' requirements.txt
-          
-          # 4. REMOVE GDAL TO PREVENT C++ COMPILATION FAULTS
           sed -i '/^GDAL==/d' requirements.txt
+          
+          # 4. REMOVE GEEMAP TO PREVENT GEOSPATIAL RUNTIME FAULTS
+          sed -i '/geemap/d' requirements.txt
           
           # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

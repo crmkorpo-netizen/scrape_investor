@@ -47,7 +47,10 @@ jobs:
           sed -i '/pycairo/d' requirements.txt
           sed -i '/PyGObject/d' requirements.txt
           
-          # 4. REMOVE THE REMAINING GEOSPATIAL MAP LIBRARIES ENTIRELY
+          # 4. REMOVE RPY2 TO PREVENT R-LANGUAGE COMPILATION FAULTS
+          sed -i '/rpy2/d' requirements.txt
+          
+          # 5. Remove geospatial map libraries entirely
           sed -i '/^GDAL==/d' requirements.txt
           sed -i '/geemap/d' requirements.txt
           sed -i '/giddy/d' requirements.txt
@@ -56,14 +59,14 @@ jobs:
           sed -i '/rasterstats/d' requirements.txt
           sed -i '/shapely/d' requirements.txt
           
-          # 5. Relax mathematical / data structural versions for Python 3.11
+          # 6. Relax mathematical / data structural versions for Python 3.11
           sed -i 's/Mako==1.3.2.dev0/Mako>=1.3.2/g' requirements.txt
           sed -i 's/networkx==3.7/networkx>=3.0/g' requirements.txt
           sed -i 's/PyWavelets==1.10.0/PyWavelets>=1.5.0/g' requirements.txt
           sed -i 's/quantecon==0.13.1/quantecon>=0.6.0/g' requirements.txt
           sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
           
-          # 6. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
+          # 7. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt
 
       - name: Install Jupyter and Dependencies

@@ -28,24 +28,27 @@ jobs:
           
       - name: Clean requirements file
         run: |
-          # Remove Google's broken kernel gateway fork and add the clean public version
+          # 1. Remove Google's broken kernel gateway fork and add the clean public version
           sed -i '/jupyter_kernel_gateway/d' requirements.txt
           echo "jupyter-kernel-gateway" >> requirements.txt
           
-          # STRIP THE SPACY MODEL LINE COMPLETELY TO PREVENT INDEX ERRORS
+          # 2. Strip the spaCy model line completely to prevent index errors
           sed -i '/en_core_web_sm/d' requirements.txt
           
-          # Remove niche/system libraries that fail to compile or find wheels
+          # 3. Remove niche/system libraries that fail to compile or find wheels
           sed -i '/python-apt/d' requirements.txt
           sed -i '/audioop-lts/d' requirements.txt
           sed -i '/cpsat-logutils/d' requirements.txt
           sed -i '/cyipopt/d' requirements.txt
           sed -i '/dbus-python/d' requirements.txt
           
-          # Safely remove heavy PyTorch ML packages to avoid architecture mismatches
+          # 4. REMOVE GDAL TO PREVENT C++ COMPILATION FAULTS
+          sed -i '/^GDAL==/d' requirements.txt
+          
+          # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt
 
-          # Relax contourpy version so pip can choose a stable runtime build
+          # 6. Relax contourpy version so pip can choose a stable runtime build
           sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
 
       - name: Install Jupyter and Dependencies
@@ -53,9 +56,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install nbconvert ipykernel
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-          # DOWNLOAD THE SPACY MODEL SEPARATELY VIA ITS OFFICIAL UTILITY
-          python -m spacy download en_core_web_sm
 
       - name: Execute Notebook
         run: |

@@ -47,9 +47,10 @@ jobs:
           sed -i '/pycairo/d' requirements.txt
           sed -i '/PyGObject/d' requirements.txt
           sed -i '/rpy2/d' requirements.txt
-          
-          # 4. REMOVE SHAP MACHINE LEARNING EXPLAINABILITY LIBRARY
           sed -i '/^shap==/d' requirements.txt
+          
+          # 4. REMOVE SPINT TO STRIP REMAINING PYSAL ECOSYSTEM BLOCKS
+          sed -i '/spint/d' requirements.txt
           
           # 5. Remove geospatial map libraries entirely
           sed -i '/^GDAL==/d' requirements.txt

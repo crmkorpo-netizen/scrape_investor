@@ -52,11 +52,15 @@ jobs:
           sed -i '/tobler/d' requirements.txt
           sed -i '/xgboost/d' requirements.txt
           
-          # 4. REMOVE ALL PYTORCH AND NVIDIA CUDA ENVIRONMENT PACKAGES
+          # 4. Remove all PyTorch and NVIDIA CUDA environment packages
           sed -i '/^torch/d' requirements.txt
           sed -i '/^nvidia/d' requirements.txt
           
-          # 5. Remove geospatial map libraries entirely
+          # 5. STRIP TENSORFLOW AND KERAS HEAVY ML FRAMEWORKS TO FREE DISK SPACE
+          sed -i '/^tensor/d' requirements.txt
+          sed -i '/^keras/d' requirements.txt
+          
+          # 6. Remove geospatial map libraries entirely
           sed -i '/^GDAL==/d' requirements.txt
           sed -i '/geemap/d' requirements.txt
           sed -i '/giddy/d' requirements.txt
@@ -65,7 +69,7 @@ jobs:
           sed -i '/rasterstats/d' requirements.txt
           sed -i '/shapely/d' requirements.txt
           
-          # 6. Relax mathematical / data structural versions for Python 3.11
+          # 7. Relax mathematical / data structural versions for Python 3.11
           sed -i 's/Mako==1.3.2.dev0/Mako>=1.3.2/g' requirements.txt
           sed -i 's/networkx==3.7/networkx>=3.0/g' requirements.txt
           sed -i 's/PyWavelets==1.10.0/PyWavelets>=1.5.0/g' requirements.txt

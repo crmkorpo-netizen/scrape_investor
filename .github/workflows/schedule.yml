@@ -2,8 +2,8 @@ name: Weekday Notebook Execution and Save
 
 on:
   schedule:
-    # Runs Sunday through Friday at 05:02 AM GMT+7 (Sun-Fri at 22:02 UTC)
-    - cron: "2 22 * * 0-5"
+    # Runs Sunday through Thursday at 22:02 UTC (Monday through Friday at 05:02 AM GMT+7)
+    - cron: "2 22 * * 0-4"
   workflow_dispatch:
 
 # Grants write access so the runner can push the CSV and notebook updates back
@@ -41,7 +41,7 @@ jobs:
 
     - name: Execute Notebook
       run: |
-        # Executes notebook and saves the new output cells
+        # Executes notebook, updates the cell outputs inside it, and prevents fallback errors
         jupyter nbconvert --to notebook --execute --inplace try_investor.ipynb
 
     - name: Commit and push changes
@@ -49,9 +49,19 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
-        # Check if any CSV files exist before attempting to stage them
+        # Stage the updated notebook file
+        git add try_investor.ipynb
+        
+        # Stage any CSV files if they exist
         if ls *.csv 1> /dev/null 2>&1; then 
           git add *.csv
-          git commit -m "Automated data update"
+         Harlow
+        fi
+        
+        # Commit only if there are actual structural changes to push
+        if ! git diff --cached --quiet; then
+          git commit -m "Automated data and notebook execution update [skip ci]"
           git push
+        else
+          echo "No changes detected in the notebook or data files. Skipping commit."
         fi

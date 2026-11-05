@@ -49,9 +49,10 @@ jobs:
           sed -i '/rpy2/d' requirements.txt
           sed -i '/^shap==/d' requirements.txt
           sed -i '/spint/d' requirements.txt
-          
-          # 4. REMOVE TOBLER TO STRIP OUT GEOSPATIAL RUNTIME BLOCKS
           sed -i '/tobler/d' requirements.txt
+          
+          # 4. RELAX XARRAY-EINSTATS VERSION FOR PYTHON 3.11 COMPATIBILITY
+          sed -i 's/xarray-einstats==0.11.0/xarray-einstats>=0.7.0/g' requirements.txt
           
           # 5. Remove geospatial map libraries entirely
           sed -i '/^GDAL==/d' requirements.txt

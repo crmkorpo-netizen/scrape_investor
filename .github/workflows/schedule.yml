@@ -35,7 +35,7 @@ jobs:
           # 2. Strip the spaCy model line completely to prevent index errors
           sed -i '/en_core_web_sm/d' requirements.txt
           
-          # 3. Remove niche/system/graphics libraries that fail to compile or find wheels
+          # 3. Remove niche/system/graphics/desktop libraries that fail to compile
           sed -i '/python-apt/d' requirements.txt
           sed -i '/audioop-lts/d' requirements.txt
           sed -i '/cpsat-logutils/d' requirements.txt
@@ -50,9 +50,10 @@ jobs:
           sed -i '/orloge/d' requirements.txt
           sed -i '/PuLP/d' requirements.txt
           sed -i '/pycairo/d' requirements.txt
-          
-          # 4. REMOVE DESKTOP GUI RUNTIME ENVIRONMENT PACKAGES
           sed -i '/PyGObject/d' requirements.txt
+          
+          # 4. RELAX PYPROJ VERSION FOR PYTHON 3.11 COMPATIBILITY
+          sed -i 's/pyproj==3.8.0/pyproj>=3.6.0/g' requirements.txt
           
           # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

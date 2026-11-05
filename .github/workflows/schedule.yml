@@ -42,9 +42,10 @@ jobs:
           sed -i '/cyipopt/d' requirements.txt
           sed -i '/dbus-python/d' requirements.txt
           sed -i '/^GDAL==/d' requirements.txt
-          
-          # 4. REMOVE GEEMAP TO PREVENT GEOSPATIAL RUNTIME FAULTS
           sed -i '/geemap/d' requirements.txt
+          
+          # 4. REMOVE GIDDY TO BAKE OUT PYSAL SPATIAL DEPENDENCIES
+          sed -i '/giddy/d' requirements.txt
           
           # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

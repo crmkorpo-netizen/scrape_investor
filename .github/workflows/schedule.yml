@@ -2,7 +2,7 @@ name: Weekday Notebook Execution and Save
 
 on:
   schedule:
-    # Runs Monday through Friday at 05:02 AM GMT+7 (Sun-Thu at 22:02 UTC)
+    # Runs Sunday through Friday at 05:02 AM GMT+7 (Sun-Fri at 22:02 UTC)
     - cron: "2 22 * * 0-5"
   
   workflow_dispatch: 

@@ -50,9 +50,11 @@ jobs:
           sed -i '/^shap==/d' requirements.txt
           sed -i '/spint/d' requirements.txt
           sed -i '/tobler/d' requirements.txt
-          
-          # 4. REMOVE XGBOOST MACHINE LEARNING TOOLKIT
           sed -i '/xgboost/d' requirements.txt
+          
+          # 4. REMOVE ALL PYTORCH AND NVIDIA CUDA ENVIRONMENT PACKAGES
+          sed -i '/^torch/d' requirements.txt
+          sed -i '/^nvidia/d' requirements.txt
           
           # 5. Remove geospatial map libraries entirely
           sed -i '/^GDAL==/d' requirements.txt
@@ -71,9 +73,6 @@ jobs:
           sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
           sed -i 's/tifffile==2026.10.15/tifffile>=2024.1.1/g' requirements.txt
           sed -i 's/xarray-einstats==0.11.0/xarray-einstats>=0.7.0/g' requirements.txt
-          
-          # 7. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
-          sed -i '/^torch/d' requirements.txt
 
       - name: Install Jupyter and Dependencies
         run: |

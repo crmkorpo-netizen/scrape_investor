@@ -27,12 +27,9 @@ jobs:
 
     - name: Install System Dependencies
       run: |
+        sudo add-apt-repository universe -y
         sudo apt-get update
-        sudo apt-get install -y software-properties-common
-        sudo add-apt-repository universe
-        sudo apt-get update
-        sudo apt-get install -y libipopt-dev gfortran pkg-config
-
+        sudo apt-get install -y coinor-libipopt-dev gfortran pkg-config
 
     - name: Install Jupyter and Dependencies
       run: |

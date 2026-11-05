@@ -43,9 +43,10 @@ jobs:
           sed -i '/dbus-python/d' requirements.txt
           sed -i '/^GDAL==/d' requirements.txt
           sed -i '/geemap/d' requirements.txt
-          
-          # 4. REMOVE GIDDY TO BAKE OUT PYSAL SPATIAL DEPENDENCIES
           sed -i '/giddy/d' requirements.txt
+          
+          # 4. REMOVE JAX AND JAXLIB SYSTEM ENVIRONMENT PACKAGES
+          sed -i '/^jax/d' requirements.txt
           
           # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

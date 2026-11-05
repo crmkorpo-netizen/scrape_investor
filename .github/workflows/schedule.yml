@@ -28,7 +28,11 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcairo2-dev libipopt-dev
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository universe
+        sudo apt-get update
+        sudo apt-get install -y libipopt-dev gfortran pkg-config
+
 
     - name: Install Jupyter and Dependencies
       run: |

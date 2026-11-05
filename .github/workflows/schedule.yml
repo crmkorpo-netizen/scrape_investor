@@ -49,9 +49,10 @@ jobs:
           sed -i 's/networkx==3.7/networkx>=3.0/g' requirements.txt
           sed -i '/orloge/d' requirements.txt
           sed -i '/PuLP/d' requirements.txt
-          
-          # 4. REMOVE GRAPHICS COMPILATION DRIVERS
           sed -i '/pycairo/d' requirements.txt
+          
+          # 4. REMOVE DESKTOP GUI RUNTIME ENVIRONMENT PACKAGES
+          sed -i '/PyGObject/d' requirements.txt
           
           # 5. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

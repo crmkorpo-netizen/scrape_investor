@@ -50,8 +50,8 @@ jobs:
           sed -i '/^shap==/d' requirements.txt
           sed -i '/spint/d' requirements.txt
           
-          # 4. RELAX TIFFFILE VERSION FOR RUNNER ARCHITECTURE COMPATIBILITY
-          sed -i 's/tifffile==2026.10.15/tifffile>=2024.1.1/g' requirements.txt
+          # 4. REMOVE TOBLER TO STRIP OUT GEOSPATIAL RUNTIME BLOCKS
+          sed -i '/tobler/d' requirements.txt
           
           # 5. Remove geospatial map libraries entirely
           sed -i '/^GDAL==/d' requirements.txt
@@ -68,6 +68,7 @@ jobs:
           sed -i 's/PyWavelets==1.10.0/PyWavelets>=1.5.0/g' requirements.txt
           sed -i 's/quantecon==0.13.1/quantecon>=0.6.0/g' requirements.txt
           sed -i 's/contourpy==1.4.0/contourpy>=1.2.0/g' requirements.txt
+          sed -i 's/tifffile==2026.10.15/tifffile>=2024.1.1/g' requirements.txt
           
           # 7. Safely remove heavy PyTorch ML packages to avoid architecture mismatches
           sed -i '/^torch/d' requirements.txt

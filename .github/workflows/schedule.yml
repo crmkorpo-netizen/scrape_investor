@@ -57,8 +57,8 @@ jobs:
         
         git add try_investor.ipynb
         
-        # Look for CSVs anywhere in the repository directory
-        find . -name "*.csv" -exec git add {} +
+        # Look for XLSXs anywhere in the repository directory
+        find . -name "*.xlsx" -exec git add {} +
         
         if ! git diff --cached --quiet; then
           git commit -m "Automated data and notebook execution update [skip ci]"

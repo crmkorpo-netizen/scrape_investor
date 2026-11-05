@@ -46,9 +46,10 @@ jobs:
           sed -i '/PuLP/d' requirements.txt
           sed -i '/pycairo/d' requirements.txt
           sed -i '/PyGObject/d' requirements.txt
-          
-          # 4. REMOVE RPY2 TO PREVENT R-LANGUAGE COMPILATION FAULTS
           sed -i '/rpy2/d' requirements.txt
+          
+          # 4. REMOVE SHAP MACHINE LEARNING EXPLAINABILITY LIBRARY
+          sed -i '/^shap==/d' requirements.txt
           
           # 5. Remove geospatial map libraries entirely
           sed -i '/^GDAL==/d' requirements.txt

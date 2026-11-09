@@ -3,7 +3,7 @@ name: Weekday Notebook Execution and Save
 on:
   schedule:
     # Runs Sunday through Thursday at 22:02 UTC (Monday through Friday at 05:02 AM GMT+7)
-    - cron: "2 22 * * 0-4"
+    - cron: "2 22 * * 0-5"
   workflow_dispatch:
 
 # Grants write access so the runner can push the CSV and notebook updates back

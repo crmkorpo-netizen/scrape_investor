@@ -1,0 +1,49 @@
+name: Clean Up Old Excel Files
+
+on:
+  schedule:
+    # Runs at 19:00 UTC every Tuesday (2) and Thursday (4)
+    # Equivalent to 03:00 AM GMT+8 every Wednesday and Friday
+    - cron: '0 19 * * 3,5'
+  workflow_dispatch: # Keeps the manual "Run workflow" button enabled for testing
+
+jobs:
+  cleanup-excel:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required so Git can read commit history to find the newest file
+
+      - name: Delete all Excel files except the newest one
+        run: |
+          python3 -c '
+          import glob, os, subprocess
+
+          # Find all .xlsx and .xls files in the current directory
+          files = glob.glob("*.xlsx") + glob.glob("*.xls")
+
+          if len(files) > 1:
+              # Sort files by their latest Git commit timestamp (newest first)
+              files.sort(
+                  key=lambda f: int(subprocess.check_output(["git", "log", "-1", "--format=%ct", "--", f]).strip() or 0),
+                  reverse=True
+              )
+              # Keep files[0] (the newest) and delete the rest
+              for old_file in files[1:]:
+                  print(f"Deleting older file: {old_file}")
+                  os.remove(old_file)
+          else:
+              print("1 or 0 Excel files found. Nothing to delete.")
+          '
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Keep newest Excel file and remove older ones" && git push)

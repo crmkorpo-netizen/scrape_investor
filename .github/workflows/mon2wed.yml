@@ -1,0 +1,67 @@
+name: Compile Monday to Wednesday Notebook Execution and Save
+
+on:
+  schedule:
+    # Runs on Thursday
+    - cron: "2 21 * * 4"
+
+  workflow_dispatch:
+
+# Grants write access so the runner can push the CSV and notebook updates back
+permissions:
+  contents: write
+
+jobs:
+  run-notebook:
+    name: Run Jupyter Notebook
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install System Dependencies
+      run: |
+        sudo add-apt-repository universe -y
+        sudo apt-get update
+        sudo apt-get install -y coinor-libipopt-dev gfortran pkg-config
+
+    - name: Install Jupyter and Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install nbconvert ipykernel
+        if [ -f requirements.txt ]; then 
+          pip install -r requirements.txt; 
+        fi
+
+    - name: Execute Notebook
+      run: |
+        jupyter nbconvert --to notebook --execute --inplace compile_investor_2.ipynb
+
+    - name: Debug Workspace Files
+      run: |
+        echo "=== Current Working Directory ==="
+        pwd
+        echo "=== Listing All Files Recursively ==="
+        ls -R
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        git add compile_investor_2.ipynb
+        git add categorized_news/
+        
+        if ! git diff --cached --quiet; then
+          git commit -m "Automated data and notebook execution update [skip ci]"
+          git push
+        else
+          echo "No changes detected. Skipping commit."
+        fi

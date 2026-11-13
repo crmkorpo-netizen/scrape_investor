@@ -3,7 +3,7 @@ name: Compile Monday to Wednesday Notebook Execution and Save
 on:
   schedule:
     # Runs on Thursday
-    - cron: "2 21 * * 4"
+    - cron: "2 21 * * 3"
 
   workflow_dispatch:
 

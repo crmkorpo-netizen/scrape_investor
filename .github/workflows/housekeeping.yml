@@ -4,7 +4,7 @@ on:
   schedule:
     # Runs at 19:00 UTC every Tuesday (2) and Thursday (4)
     # Equivalent to 03:00 AM GMT+8 every Wednesday and Friday
-    - cron: '0 19 * * 3,5'
+    - cron: '0 19 * * 5'
   workflow_dispatch: # Keeps the manual "Run workflow" button enabled for testing
 
 jobs:
@@ -34,11 +34,11 @@ jobs:
                   reverse=True
               )
               # Keep files[0] (the newest) and delete the rest
-              for old_file in files[1:]:
+              for old_file in files[2:]:
                   print(f"Deleting older file: {old_file}")
                   os.remove(old_file)
           else:
-              print("1 or 0 Excel files found. Nothing to delete.")
+              print("2 or 0 Excel files found. Nothing to delete.")
           '
 
       - name: Commit and push changes

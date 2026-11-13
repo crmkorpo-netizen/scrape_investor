@@ -56,10 +56,8 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
-        git add try_investor.ipynb
-        
-        # Look for XLSXs anywhere in the repository directory
-        find . -name "*.xlsx" -exec git add {} +
+        git add compile_investor_1.ipynb
+        git add categorized_news/
         
         if ! git diff --cached --quiet; then
           git commit -m "Automated data and notebook execution update [skip ci]"

@@ -26,8 +26,8 @@ jobs:
 
           # Find all .xlsx and .xls files in the current directory
           files = (
-                    glob.glob("categorize_news/*.xlsx") 
-                    + glob.glob("categorize_news/*.xls")
+                    glob.glob("./categorize_news/*.xlsx") 
+                    + glob.glob("./categorize_news/*.xls")
                 )
 
           if len(files) > 1:

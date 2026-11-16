@@ -53,8 +53,8 @@ jobs:
 
     - name: Commit and push changes
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local pull.rebase false user.email "action@github.com"
+        git config --local pull.rebase false user.name "GitHub Action"
         
         git add compile_investor_1.ipynb
         git add categorized_news/

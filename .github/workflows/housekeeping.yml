@@ -25,7 +25,10 @@ jobs:
           import glob, os, subprocess
 
           # Find all .xlsx and .xls files in the current directory
-          files = glob.glob("*.xlsx") + glob.glob("*.xls")
+          files = (
+                    glob.glob("categorize news/*.xlsx") 
+                    + glob.glob("categorize news/*.xls")
+                )
 
           if len(files) > 1:
               # Sort files by their latest Git commit timestamp (newest first)

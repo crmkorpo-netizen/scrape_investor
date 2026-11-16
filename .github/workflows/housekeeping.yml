@@ -48,11 +48,12 @@ jobs:
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@://github.com"
-          git add -A categorize_news/
+          git add -A
           if ! git diff --staged --quiet; then
             git commit -m "Cleanup: remove old Excel files"
             git pull --rebase origin ${{ github.ref_name }}
             git push
           else
-            echo "No files were deleted."
+            echo "No changes to commit."
           fi
+

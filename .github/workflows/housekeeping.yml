@@ -44,9 +44,15 @@ jobs:
               print("2 or 0 Excel files found. Nothing to delete.")
           '
 
-      - name: Commit and push changes
+      - name: Push deletions to GitHub repository
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
-          git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Keep newest Excel file and remove older ones" && git push)
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@://github.com"
+          git add -A categorize_news/
+          if ! git diff --staged --quiet; then
+            git commit -m "Cleanup: remove old Excel files"
+            git pull --rebase origin ${{ github.ref_name }}
+            git push
+          else
+            echo "No files were deleted."
+          fi

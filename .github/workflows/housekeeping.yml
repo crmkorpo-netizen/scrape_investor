@@ -6,54 +6,61 @@ on:
     # Equivalent to 03:00 AM GMT+8 every Wednesday and Friday
     - cron: '0 19 * * 5'
   workflow_dispatch: # Keeps the manual "Run workflow" button enabled for testing
+  # Run automatically whenever a file is pushed to categorize_news on main
+  push:
+    branches:
+      - main
+    paths:
+      - 'categorize_news/**'
+
+permissions:
+  contents: write
 
 jobs:
-  cleanup-excel:
+  cleanup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required so Git can read commit history to find the newest file
+          ref: main
+          # Required so git log can check commit dates of all files
+          fetch-depth: 0
 
-      - name: Delete all Excel files except the newest one
+      - name: Keep only the 2 newest files in categorize_news
         run: |
-          python3 -c '
-          import glob, os, subprocess
-
-          # Find all .xlsx and .xls files in the current directory
-          files = (
-                    glob.glob("./categorize_news/*.xlsx") 
-                    + glob.glob("./categorize_news/*.xls")
-                )
-
-          if len(files) > 1:
-              # Sort files by their latest Git commit timestamp (newest first)
-              files.sort(
-                  key=lambda f: int(subprocess.check_output(["git", "log", "-1", "--format=%ct", "--", f]).strip() or 0),
-                  reverse=True
-              )
-              # Keep files[0] (the newest) and delete the rest
-              for old_file in files[2:]:
-                  print(f"Deleting older file: {old_file}")
-                  os.remove(old_file)
-          else:
-              print("2 or 0 Excel files found. Nothing to delete.")
-          '
-
-      - name: Push deletions to GitHub repository
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@://github.com"
-          git add -A
-          if ! git diff --staged --quiet; then
-            git commit -m "Cleanup: remove old Excel files"
-            git pull --rebase origin ${{ github.ref_name }}
-            git push
-          else
-            echo "No changes to commit."
+          TARGET_DIR="categorize_news"
+          
+          # Exit safely if the directory doesn't exist
+          if [ ! -d "$TARGET_DIR" ]; then
+            echo "Directory $TARGET_DIR does not exist."
+            exit 0
           fi
 
+          # Find the 2 most recently added/modified files in Git history
+          KEEP_FILES=$(git log --pretty=format: --name-only --diff-filter=AM -- "$TARGET_DIR" | awk 'NF' | awk '!seen[$0]++' | head -n 2)
+          
+          echo "Keeping files:"
+          echo "$KEEP_FILES"
+
+          # Loop through top-level files in categorize_news and delete older ones
+          find "$TARGET_DIR" -maxdepth 1 -type f | while read -r file; do
+            if ! echo "$KEEP_FILES" | grep -Fxq "$file"; then
+              echo "Deleting old file: $file"
+              rm -f "$file"
+            fi
+          done
+
+      - name: Commit and push deletions
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@://github.com"
+          git add categorize_news/
+          
+          # Only commit and push if files were actually deleted
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: keep only 2 newest files in categorize_news"
+            git push origin main
+          else
+            echo "No old files to delete."
+          fi

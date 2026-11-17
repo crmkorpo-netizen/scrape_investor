@@ -7,11 +7,6 @@ on:
     - cron: '0 19 * * 5'
   workflow_dispatch: # Keeps the manual "Run workflow" button enabled for testing
   # Run automatically whenever a file is pushed to categorize_news on main
-  push:
-    branches:
-      - main
-    paths:
-      - 'categorize_news/**'
 
 permissions:
   contents: write
@@ -25,26 +20,34 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Delete all Excel files except the 2 newest ones
+      - name: Delete all Excel files except the 2 newest per folder
         run: |
           python3 -c '
           import glob, os, subprocess
 
-          # Find all .xlsx and .xls files in the current directory
-          files = glob.glob("*.xlsx") + glob.glob("*.xls")
+          # List of folders to check (current root folder and categorize_news)
+          folders = [".", "categorize_news"]
 
-          if len(files) > 2:
-              # Sort files by their latest Git commit timestamp (newest first)
-              files.sort(
-                  key=lambda f: int(subprocess.check_output(["git", "log", "-1", "--format=%ct", "--", f]).strip() or 0),
-                  reverse=True
-              )
-              # Keep files[0] and files[1] (the 2 newest) and delete the rest
-              for old_file in files[2:]:
-                  print(f"Deleting older file: {old_file}")
-                  os.remove(old_file)
-          else:
-              print("2 or fewer Excel files found. Nothing to delete.")
+          for folder in folders:
+              if not os.path.isdir(folder):
+                  print(f"Folder not found: {folder}")
+                  continue
+
+              # Find all .xlsx and .xls files inside this specific folder
+              files = glob.glob(os.path.join(folder, "*.xlsx")) + glob.glob(os.path.join(folder, "*.xls"))
+
+              if len(files) > 2:
+                  # Sort files by their latest Git commit timestamp (newest first)
+                  files.sort(
+                      key=lambda f: int(subprocess.check_output(["git", "log", "-1", "--format=%ct", "--", f]).strip() or 0),
+                      reverse=True
+                  )
+                  # Keep the 2 newest files in this folder and delete the rest
+                  for old_file in files[2:]:
+                      print(f"Deleting older file: {old_file}")
+                      os.remove(old_file)
+              else:
+                  print(f"[{folder}] 2 or fewer Excel files found. Nothing to delete.")
           '
 
       - name: Commit and push changes
@@ -52,4 +55,4 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@://github.com"
           git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Keep 2 newest Excel files and remove older ones" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Keep 2 newest Excel files per folder and remove older ones" && git push)

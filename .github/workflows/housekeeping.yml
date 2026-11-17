@@ -26,7 +26,7 @@ jobs:
           import glob, os, subprocess
 
           # List of folders to check (current root folder and categorize_news)
-          folders = [".", "categorize_news"]
+          folders = [".", "categorized_news"]
 
           for folder in folders:
               if not os.path.isdir(folder):

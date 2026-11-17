@@ -23,44 +23,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
-          # Required so git log can check commit dates of all files
           fetch-depth: 0
 
-      - name: Keep only the 2 newest files in categorize_news
+      - name: Delete all Excel files except the 2 newest ones
         run: |
-          TARGET_DIR="categorize_news"
-          
-          # Exit safely if the directory doesn't exist
-          if [ ! -d "$TARGET_DIR" ]; then
-            echo "Directory $TARGET_DIR does not exist."
-            exit 0
-          fi
+          python3 -c '
+          import glob, os, subprocess
 
-          # Find the 2 most recently added/modified files in Git history
-          KEEP_FILES=$(git log --pretty=format: --name-only --diff-filter=AM -- "$TARGET_DIR" | awk 'NF' | awk '!seen[$0]++' | head -n 2)
-          
-          echo "Keeping files:"
-          echo "$KEEP_FILES"
+          # Find all .xlsx and .xls files in the current directory
+          files = glob.glob("*.xlsx") + glob.glob("*.xls")
 
-          # Loop through top-level files in categorize_news and delete older ones
-          find "$TARGET_DIR" -maxdepth 1 -type f | while read -r file; do
-            if ! echo "$KEEP_FILES" | grep -Fxq "$file"; then
-              echo "Deleting old file: $file"
-              rm -f "$file"
-            fi
-          done
+          if len(files) > 2:
+              # Sort files by their latest Git commit timestamp (newest first)
+              files.sort(
+                  key=lambda f: int(subprocess.check_output(["git", "log", "-1", "--format=%ct", "--", f]).strip() or 0),
+                  reverse=True
+              )
+              # Keep files[0] and files[1] (the 2 newest) and delete the rest
+              for old_file in files[2:]:
+                  print(f"Deleting older file: {old_file}")
+                  os.remove(old_file)
+          else:
+              print("2 or fewer Excel files found. Nothing to delete.")
+          '
 
-      - name: Commit and push deletions
+      - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@://github.com"
-          git add categorize_news/
-          
-          # Only commit and push if files were actually deleted
-          if ! git diff --staged --quiet; then
-            git commit -m "chore: keep only 2 newest files in categorize_news"
-            git push origin main
-          else
-            echo "No old files to delete."
-          fi
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Keep 2 newest Excel files and remove older ones" && git push)
